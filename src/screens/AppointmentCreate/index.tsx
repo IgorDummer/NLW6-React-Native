@@ -15,9 +15,23 @@ import { GuildIcon } from '../../components/GuildIcon';
 import { SmallInput } from '../../components/SmallInput';
 import { TextArea } from '../../components/TextArea';
 import { Button } from '../../components/Button';
+import { ModalView } from '../../components/ModalView';
+import { Guilds } from '../Guilds';
+import { GuildProps } from '../../components/Guild';
 
 export function AppointmentCreate() {
     const [category, setCaterogy] = useState('');
+    const [openGuildModal, setOpenGuildsModal] = useState(false);
+    const [guild, setGuild] = useState<GuildProps>({} as GuildProps);
+
+    function handleOpenGuilds() {
+        setOpenGuildsModal(true);
+    }
+
+    function handleGuildSelect(guildSelect: GuildProps) {
+        setGuild(guildSelect);
+        setOpenGuildsModal(false);
+    }
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
@@ -35,15 +49,12 @@ export function AppointmentCreate() {
                         categorySelected={category}
                     />
                     <View style={styles.form}>
-                        <RectButton>
+                        <RectButton onPress={handleOpenGuilds}>
                             <View style={styles.select}>
-                                {
-                                    /*<View style={styles.image} />*/
-                                    <GuildIcon />
-                                }
+                                {guild.icon ? <GuildIcon /> : <View style={styles.image} />}
                                 <View style={styles.selectBody}>
                                     <Text style={styles.label}>
-                                        Selecione um servidor
+                                        {guild.name ? guild.name : 'Selecione um servidor'}
                                     </Text>
                                 </View>
                                 <Feather
@@ -96,6 +107,9 @@ export function AppointmentCreate() {
                     </View>
                 </Background>
             </ScrollView>
+            <ModalView visible={openGuildModal}>
+                <Guilds handleGuildSelected={handleGuildSelect} />
+            </ModalView>
         </KeyboardAvoidingView>
     );
 }
